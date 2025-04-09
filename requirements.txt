@@ -1,2 +1,5 @@
 pygame
 sqlalchemy
+gradio
+matplotlib
+numpy

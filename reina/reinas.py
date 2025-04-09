@@ -1,3 +1,4 @@
+# reina/reinas.py
 from database.db import guardar_reinas_result  # Nueva importación
 
 class Reinas:
@@ -32,45 +33,66 @@ class Reinas:
         return self.soluciones
 
     def mostrar_tablero(self, solucion):
-        print("   ", end="")
+        # Convertir el tablero a una cadena para mostrar
+        output = "   "
         for col in range(self.n):
-            print(f" {col} ", end="")
-        print("\n  +" + "---+" * self.n)
+            output += f" {col} "
+        output += "\n  +" + "---+" * self.n + "\n"
 
         for fila in range(self.n):
-            print(f"{fila} |", end="")
+            output += f"{fila} |"
             for col in range(self.n):
                 if solucion[col] == fila:
-                    print(" Q |", end="")
+                    output += " Q |"
                 else:
-                    print(" . |", end="")
-            print("\n  +" + "---+" * self.n)
-        print()
+                    output += " . |"
+            output += "\n  +" + "---+" * self.n + "\n"
+        return output
+
+    def tablero_binario(self, solucion):
+        # Convertir una solución a una matriz binaria para visualización
+        tablero = [[0 for _ in range(self.n)] for _ in range(self.n)]
+        for col, fila in enumerate(solucion):
+            tablero[fila][col] = 1
+        return tablero
 
 def resolver_reinas(n=8, max_soluciones_mostrar=3):
-    print(f"\n=== Iniciando el Problema de las {n} Reinas ===")
+    mensaje = f"\n=== Iniciando el Problema de las {n} Reinas ===\n"
     try:
-        print(f"Resolviendo el problema de las {n} reinas...\n")
+        mensaje += f"Resolviendo el problema de las {n} reinas...\n"
         
         reinas = Reinas(n)
         soluciones = reinas.obtener_soluciones()
-        print(f"Se encontraron {len(soluciones)} soluciones.\n")
+        mensaje += f"Se encontraron {len(soluciones)} soluciones.\n"
         
         # Guardar automáticamente los resultados en la base de datos
         guardar_reinas_result(tablero_size=n, soluciones=soluciones)
-        print("Resultados guardados automáticamente en la base de datos.\n")
+        mensaje += "Resultados guardados automáticamente en la base de datos.\n"
         
+        if not soluciones:
+            mensaje += "No se encontraron soluciones.\n"
+            mensaje += "=== Problema Finalizado ===\n"
+            return mensaje, None
+
+        # Mostrar hasta max_soluciones_mostrar soluciones
         for i, solucion in enumerate(soluciones[:max_soluciones_mostrar]):
-            print(f"Solución {i + 1}:")
-            reinas.mostrar_tablero(solucion)
+            mensaje += f"\nSolución {i + 1}:\n"
+            mensaje += reinas.mostrar_tablero(solucion)
         
         if len(soluciones) > max_soluciones_mostrar:
-            print(f"(Y {len(soluciones) - max_soluciones_mostrar} soluciones más...)")
+            mensaje += f"(Y {len(soluciones) - max_soluciones_mostrar} soluciones más...)\n"
+        
+        mensaje += "=== Problema Finalizado ===\n"
+        
+        # Devolver la primera solución como matriz binaria para visualización
+        tablero = reinas.tablero_binario(soluciones[0])
+        return mensaje, tablero
     
     except Exception as e:
-        print(f"Error al ejecutar el problema de las reinas: {e}")
-    
-    print("=== Problema Finalizado ===\n")
+        mensaje += f"Error al ejecutar el problema de las reinas: {e}\n"
+        mensaje += "=== Problema Finalizado ===\n"
+        return mensaje, None
 
 if __name__ == "__main__":
-    resolver_reinas(n=8, max_soluciones_mostrar=3)
+    texto, _ = resolver_reinas(n=8, max_soluciones_mostrar=3)
+    print(texto)

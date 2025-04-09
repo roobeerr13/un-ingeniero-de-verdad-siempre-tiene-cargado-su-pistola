@@ -53,6 +53,6 @@ def manejar_vectores():
             break
         else:
             print("Opción inválida. Intenta de nuevo.")
-
+        
 if __name__ == "__main__":
     manejar_vectores()
