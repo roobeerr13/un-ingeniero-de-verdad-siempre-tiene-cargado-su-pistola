@@ -1,3 +1,5 @@
+from database.db import guardar_caballo_result  # Nueva importación
+
 class Caballo:
     def __init__(self, n):
         self.n = n
@@ -51,6 +53,10 @@ def resolver_caballo(n=8, start_x=0, start_y=0):
     if caballo.resolver(start_x, start_y, 1):
         print("Solución encontrada:")
         caballo.mostrar_tablero()
+        
+        # Guardar automáticamente el resultado en la base de datos
+        guardar_caballo_result(tablero_size=n, start_x=start_x, start_y=start_y, recorrido=caballo.tablero)
+        print("Resultado guardado automáticamente en la base de datos.\n")
     else:
         print("No se encontró solución.")
 

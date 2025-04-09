@@ -1,14 +1,12 @@
+from database.db import guardar_reinas_result  # Nueva importación
+
 class Reinas:
     def __init__(self, n=8):
-        self.n = n  # Tamaño del tablero (8x8 por defecto)
-        self.tablero = [-1] * n  # Representa las posiciones de las reinas: tablero[col] = fila
-        self.soluciones = []  # Almacena todas las soluciones encontradas
+        self.n = n
+        self.tablero = [-1] * n
+        self.soluciones = []
 
     def es_seguro(self, fila, col):
-        """
-        Verifica si es seguro colocar una reina en la posición (fila, col).
-        Revisa conflictos en filas, columnas y diagonales.
-        """
         for prev_col in range(col):
             prev_fila = self.tablero[prev_col]
             if prev_fila == fila:
@@ -18,10 +16,6 @@ class Reinas:
         return True
 
     def resolver(self, col=0):
-        """
-        Resuelve el problema de las N reinas usando backtracking.
-        col: columna actual en la que estamos intentando colocar una reina.
-        """
         if col == self.n:
             self.soluciones.append(self.tablero[:])
             return
@@ -33,17 +27,11 @@ class Reinas:
                 self.tablero[col] = -1
 
     def obtener_soluciones(self):
-        """
-        Devuelve todas las soluciones encontradas.
-        """
         self.soluciones = []
         self.resolver()
         return self.soluciones
 
     def mostrar_tablero(self, solucion):
-        """
-        Muestra una solución en forma de tablero con bordes y etiquetas.
-        """
         print("   ", end="")
         for col in range(self.n):
             print(f" {col} ", end="")
@@ -60,13 +48,6 @@ class Reinas:
         print()
 
 def resolver_reinas(n=8, max_soluciones_mostrar=3):
-    """
-    Resuelve el problema de las N reinas y muestra las soluciones.
-    
-    Args:
-        n (int): Tamaño del tablero (por defecto 8 para 8 reinas).
-        max_soluciones_mostrar (int): Número máximo de soluciones a mostrar.
-    """
     print(f"\n=== Iniciando el Problema de las {n} Reinas ===")
     try:
         print(f"Resolviendo el problema de las {n} reinas...\n")
@@ -74,6 +55,10 @@ def resolver_reinas(n=8, max_soluciones_mostrar=3):
         reinas = Reinas(n)
         soluciones = reinas.obtener_soluciones()
         print(f"Se encontraron {len(soluciones)} soluciones.\n")
+        
+        # Guardar automáticamente los resultados en la base de datos
+        guardar_reinas_result(tablero_size=n, soluciones=soluciones)
+        print("Resultados guardados automáticamente en la base de datos.\n")
         
         for i, solucion in enumerate(soluciones[:max_soluciones_mostrar]):
             print(f"Solución {i + 1}:")

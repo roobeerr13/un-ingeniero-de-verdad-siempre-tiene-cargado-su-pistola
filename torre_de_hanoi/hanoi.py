@@ -1,3 +1,5 @@
+from database.db import guardar_hanoi_result  # Nueva importación
+
 class TorreDeHanoi:
     def __init__(self, n):
         self.n = n
@@ -6,6 +8,7 @@ class TorreDeHanoi:
             "B": [],
             "C": []
         }
+        self.movimientos = []  # Lista para almacenar los movimientos
 
     def mostrar_torres(self):
         print("\nEstado actual de las torres:")
@@ -25,13 +28,17 @@ class TorreDeHanoi:
         if n == 1:
             disco = self.torres[origen].pop()
             self.torres[destino].append(disco)
-            print(f"Mover disco 1 de {origen} a {destino}")
+            movimiento = f"Mover disco 1 de {origen} a {destino}"
+            self.movimientos.append(movimiento)
+            print(movimiento)
             self.mostrar_torres()
             return
         self.torre_de_hanoi(n - 1, origen, destino, auxiliar)
         disco = self.torres[origen].pop()
         self.torres[destino].append(disco)
-        print(f"Mover disco {n} de {origen} a {destino}")
+        movimiento = f"Mover disco {n} de {origen} a {destino}"
+        self.movimientos.append(movimiento)
+        print(movimiento)
         self.mostrar_torres()
         self.torre_de_hanoi(n - 1, auxiliar, origen, destino)
 
@@ -41,6 +48,10 @@ def resolver_torre_de_hanoi(n=3):
     print("Estado inicial:")
     juego.mostrar_torres()
     juego.torre_de_hanoi(n, "A", "B", "C")
+    
+    # Guardar automáticamente los movimientos en la base de datos
+    guardar_hanoi_result(num_discos=n, movimientos=juego.movimientos)
+    print("Movimientos guardados automáticamente en la base de datos.\n")
 
 if __name__ == "__main__":
     resolver_torre_de_hanoi(n=3)
